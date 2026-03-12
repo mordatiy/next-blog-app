@@ -31,7 +31,14 @@ export async function generateMetadata(
 	}
 }
 
-async function getData()  {
+type Post = {
+	id: number;
+	title: string;
+	body: string;
+	userId: number;
+};
+
+async function getData(): Promise<Post[]>  {
 	const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
 		next: {
 			revalidate: 60
