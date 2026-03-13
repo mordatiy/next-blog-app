@@ -6,10 +6,6 @@ import {useState} from "react";
 import {getPostsBySearch} from "@/services/getPosts";
 
 
-type PostSearchProps = {
-	onSearch: (value: any) => void;
-}
-
 const PostSearch = () => {
 	const { mutate } = useSWR("posts");
 	const [search, setSearch] = useState('');
