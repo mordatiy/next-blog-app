@@ -27,8 +27,12 @@ h1 {
 
     /* HEADER */
 
-    header.container {
+    header.container>nav {
         @apply flex justify-center gap-8 border-b py-4;
+    }
+    a.active {
+        color: blueviolet;
+        text-decoration: underline;
     }
 
     /* MAIN */

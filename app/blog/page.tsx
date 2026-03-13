@@ -1,6 +1,10 @@
+"use client"
+
 // /blog/12?lang=en&sort=new
-import {Metadata, ResolvingMetadata} from "next";
-import Link from "next/link";
+import {useEffect, useState} from "react";
+import {getAllPosts} from "@/services/getPosts";
+import Posts from "@/components/Posts";
+import PostSearch from "@/components/PostSearch";
 
 type Props = {
 	params: Promise<{ id: string }>
@@ -10,26 +14,6 @@ type Props = {
 	}>
 }
 
-export async function generateMetadata(
-	{ params, searchParams }: Props,
-	parent: ResolvingMetadata
-): Promise<Metadata> {
-	// read route params
-	const { id } = await params
-	// fetch data
-	// const product = await fetch(`https://.../${id}`).then((res) => res.json())
-
-	// optionally access and extend (rather than replace) parent metadata
-	// const previousImages = (await parent).openGraph?.images || []
-
-	return {
-		title: `Blog ID: `+id,
-		// title: product.title,
-		// openGraph: {
-		// 	images: ['/some-specific-page-image.jpg', ...previousImages],
-		// },
-	}
-}
 
 type Post = {
 	id: number;
@@ -38,35 +22,28 @@ type Post = {
 	userId: number;
 };
 
-async function getData(): Promise<Post[]>  {
-	const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
-		next: {
-			revalidate: 60
-		}
-	})
+//
+// export const metadata: Metadata = {
+// 	title: "Blog | Next App",
+// };
 
-	if (!response.ok) throw new Error("Unable to fetch data.");
+export default function Post({ params, searchParams }: Props) {
+	const [posts, setPosts] = useState<Post[]>([])
+	const [loading, setLoading] = useState(true)
 
-	return response.json()
-}
 
-export default async function Post({ params, searchParams }: Props) {
-	const { id } = await params
-	const { lang, sort } = await searchParams
-	const posts = await getData()
+	useEffect(() => {
+		getAllPosts()
+			.then(setPosts)
+			.finally( ()=> setLoading(false));
+	}, [])
+
 
 	return (
 		<>
-			<h1>ID: {id}</h1>
-			<p>Lang: {lang}</p>
-			<p>Sort: {sort}</p>
-			<ul>
-				{posts.map((post) => (
-					<li key={post.id}>
-						<Link href={`/blog/${post.id}`}>{post.title}</Link>
-					</li>
-				))}
-			</ul>
+			<h1>Blog Page</h1>
+			<PostSearch onSearch={setPosts} />
+			{loading ? <h3>Loading 33...</h3> : <Posts posts={posts} />}
 		</>
 	)
 }
