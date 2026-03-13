@@ -1,12 +1,21 @@
+"use client";
+
+import useSWR from "swr";
 import Link from "next/link";
-import {Post} from "@/services/getPosts";
+
+import {getAllPosts, Post} from "@/services/getPosts";
 
 type PostsProps = {
 	posts: Post[]
 }
 
-const Posts = ({posts}: PostsProps) => {
-	return(
+const Posts = () => {
+	const { data: posts, isLoading } = useSWR("posts", getAllPosts);
+
+
+	return isLoading ? (
+		<h3>Loading... </h3>
+	) : (
 		<ul>
 			{posts.map((post: Post) => (
 				<li key={post.id}>
@@ -14,7 +23,7 @@ const Posts = ({posts}: PostsProps) => {
 				</li>
 			))}
 		</ul>
-	)
-}
+	);
+};
 
 export default Posts;
